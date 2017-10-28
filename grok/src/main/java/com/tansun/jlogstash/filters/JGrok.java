@@ -17,6 +17,8 @@
  */
 package com.tansun.jlogstash.filters;
 
+import com.tansun.jlogstash.annotation.Required;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -27,24 +29,23 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.dtstack.jlogstash.filters.BaseFilter;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.dtstack.jlogstash.annotation.Required;
-//import com.google.common.collect.Lists;
-//import com.google.common.collect.Maps;
+
 import oi.thekraken.grok.api.Grok;
 import oi.thekraken.grok.api.Match;
 import oi.thekraken.grok.api.exception.GrokException;
+
+//import com.google.common.collect.Lists;
+//import com.google.common.collect.Maps;
 
 
 /**
  * 
  * Reason: TODO ADD REASON(可选)
  * Date: 2016年8月31日 下午1:53:24
- * Company: www.dtstack.com
+ * Company: www.tansun.com
  * @author sishu.yss
  *
  */
@@ -113,8 +114,8 @@ public class JGrok extends BaseFilter {
 			try {
 				grok = new Grok();
 				addPatternToGrok(grok);
-				addFromPatternMap();
 				addFromPatternFile();
+				addFromPatternMap();
 			} catch (Exception e) {
 				logger.error("grok compile is error:", e);
 				System.exit(1);
@@ -141,7 +142,7 @@ public class JGrok extends BaseFilter {
 				Matcher m = pattern.matcher(line);
 				if (m.matches()) {
 					grok.addPattern(m.group(1), m.group(2));
-					grok.compile(m.group(1));
+//					grok.compile(m.group(1));
 				}
 			}
 		} catch (Exception e) {
@@ -176,6 +177,8 @@ public class JGrok extends BaseFilter {
 				String value = entry.getValue();
 				if(StringUtils.isNotBlank(value)){
 					grok.addPattern(key,value);
+					grok.compile(key);
+				} else {
 					grok.compile(key);
 				}
 			}
