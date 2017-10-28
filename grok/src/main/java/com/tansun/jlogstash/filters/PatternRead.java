@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dtstack.jlogstash.filters;
+package com.tansun.jlogstash.filters;
 
 import java.io.BufferedReader;
 import java.io.IOException;

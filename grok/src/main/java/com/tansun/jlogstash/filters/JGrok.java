@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dtstack.jlogstash.filters;
+package com.tansun.jlogstash.filters;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -27,7 +27,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.google.common.collect.Maps;
+import com.dtstack.jlogstash.filters.BaseFilter;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
