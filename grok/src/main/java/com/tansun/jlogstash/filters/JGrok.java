@@ -197,19 +197,15 @@ public class JGrok extends BaseFilter {
   protected Map filter(Map event) {
     try {
       //根据condition 判断是否执行grok
-      if(ConditionUtils.isTrue(event,this.condition)) {
-        for (String src : srcs) {
-          Object str = event.get(src);
-          if (StringUtils.isNotBlank((String) str)) {
-            parserGrok(event, (String) str);
-          }
+      if(StringUtils.isEmpty(this.condition)) {
+        if(!ConditionUtils.isTrue(event,this.condition)) {
+          return event;
         }
-      } else {
-        for (String src : srcs) {
-          Object str = event.get(src);
-          if (StringUtils.isNotBlank((String) str)) {
-            parserGrok(event, (String) str);
-          }
+      }
+      for (String src : srcs) {
+        Object str = event.get(src);
+        if (StringUtils.isNotBlank((String) str)) {
+          parserGrok(event, (String) str);
         }
       }
 
