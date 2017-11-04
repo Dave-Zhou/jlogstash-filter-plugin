@@ -17,8 +17,6 @@
  */
 package com.tansun.jlogstash.filters;
 
-import com.dtstack.jlogstash.filters.BaseFilter;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +28,7 @@ import org.apache.log4j.Logger;
  * 
  * Reason: TODO ADD REASON(可选)
  * Date: 2016年8月31日 下午1:54:01
- * Company: www.dtstack.com
+ * Company: www.tansun.com
  * @author sishu.yss
  *
  */

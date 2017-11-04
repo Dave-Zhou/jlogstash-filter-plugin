@@ -15,12 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dtstack.jlogstash.filters;
+package com.tansun.jlogstash.filters;
 
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import com.dtstack.jlogstash.annotation.Required;
+import com.dtstack.jlogstash.filters.BaseFilter;
 
 /**
  * 

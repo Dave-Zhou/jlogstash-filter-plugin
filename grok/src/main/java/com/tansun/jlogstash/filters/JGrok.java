@@ -18,6 +18,7 @@
 package com.tansun.jlogstash.filters;
 
 import com.tansun.jlogstash.annotation.Required;
+import com.tansun.jlogstash.utils.ConditionUtils;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -195,18 +196,12 @@ public class JGrok extends BaseFilter {
   @Override
   protected Map filter(Map event) {
     try {
-      //通过type判断是否需要执行
-      if(!StringUtils.isEmpty(this.condition)) {
-        String type = (String)event.get("type");
-        if(condition.contains("==")) {
-          String[] arr = this.condition.split("==");
-          if(arr[1].trim().equals(type)) {
-            for (String src : srcs) {
-              Object str = event.get(src);
-              if (StringUtils.isNotBlank((String) str)) {
-                parserGrok(event, (String) str);
-              }
-            }
+      //根据condition 判断是否执行grok
+      if(ConditionUtils.isTrue(event,this.condition)) {
+        for (String src : srcs) {
+          Object str = event.get(src);
+          if (StringUtils.isNotBlank((String) str)) {
+            parserGrok(event, (String) str);
           }
         }
       } else {

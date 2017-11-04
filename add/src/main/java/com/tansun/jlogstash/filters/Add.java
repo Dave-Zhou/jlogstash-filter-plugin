@@ -15,24 +15,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dtstack.jlogstash.filters;
+package com.tansun.jlogstash.filters;
+
+import com.tansun.jlogstash.annotation.Required;
 
 import java.net.InetAddress;
-//import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.dtstack.jlogstash.annotation.Required;
+
+//import java.util.HashMap;
 
 
 /**
  * 
  * Reason: TODO ADD REASON(可选)
  * Date: 2016年8月31日 下午1:52:37
- * Company: www.dtstack.com
+ * Company: www.tansun.com
  * @author sishu.yss
  *
  */

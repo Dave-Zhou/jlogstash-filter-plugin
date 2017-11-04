@@ -15,19 +15,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dtstack.jlogstash.filters;
+package com.tansun.jlogstash.filters;
+
+import com.tansun.jlogstash.annotation.Required;
 
 import java.util.List;
 import java.util.Map;
-
-import com.dtstack.jlogstash.annotation.Required;
 
 
 /**
  * 
  * Reason: TODO ADD REASON(可选)
  * Date: 2016年8月31日 下午1:55:04
- * Company: www.dtstack.com
+ * Company: www.tansun.com
  * @author sishu.yss
  *
  */

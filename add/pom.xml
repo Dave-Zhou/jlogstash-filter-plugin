@@ -2,13 +2,29 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.dtstack.jlogstash.filter</groupId>
+  <groupId>com.tansun.jlogstash.filter</groupId>
   <artifactId>add</artifactId>
   <version>1.0.0</version>
   <packaging>jar</packaging>
 
   <name>add</name>
   <url>http://maven.apache.org</url>
+
+	<!--maven仓库地址 -->
+	<repositories>
+		<repository>
+			<id>public</id>
+			<name>Public Repositories</name>
+			<url>http://60.207.126.242:10009/nexus/content/groups/public/</url>
+		</repository>
+	</repositories>
+	<!--发布jar包的仓库地址 -->
+	<distributionManagement>
+		<repository>
+			<id>releases</id>
+			<url>http://60.207.126.242:10009/nexus/content/repositories/releases/</url>
+		</repository>
+	</distributionManagement>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -40,6 +56,15 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- 跳过test 编译 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.20.1</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -55,7 +80,7 @@
 
   <dependencies>
 	  <dependency>
-		  <groupId>com.dtstack.jlogstash</groupId>
+		  <groupId>com.tansun.jlogstash</groupId>
 		  <artifactId>jlogstash</artifactId>
 		  <version>1.0.0</version>
 		  <scope>provided</scope>

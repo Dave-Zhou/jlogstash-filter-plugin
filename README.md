@@ -40,7 +40,10 @@
   
   patterns:必填 map结构，需要的正则表达式，{"pattern":"(?\<fromApp\>[0-9A-B])"}
   
-  如果:grok自带的已经有了,正则表达式不需要写，列如:{"%{COMBINEDAPACHELOG}":""}
+  patternFile: 加载定义grok文件，请写入绝对路径，如/mypattern/grok-pattern
+  
+  使用自定义或则grok自带的表达式，使用方式如:{"%{COMBINEDAPACHELOG}":""}
+  condition: 条件判断，只支持"==" 例如:"[type] == testType"
 
 # Json:
 
