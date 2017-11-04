@@ -42,168 +42,187 @@ import oi.thekraken.grok.api.exception.GrokException;
 
 
 /**
- * 
  * Reason: TODO ADD REASON(可选)
  * Date: 2016年8月31日 下午1:53:24
  * Company: www.tansun.com
- * @author sishu.yss
  *
+ * @author sishu.yss
  */
 public class JGrok extends BaseFilter {
 
-    private static final Logger logger = LoggerFactory.getLogger(JGrok.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(JGrok.class.getName());
 
-    @Required(required=true)
-    private static List<String> srcs;
-    
-    private static Map<String, String> patterns;
+  @Required(required = true)
+  private static List<String> srcs;
 
-    private static String patternFile;
-    
-    private Grok grok =null;
+  private static Map<String, String> patterns;
 
-    public JGrok(Map config) {
-        super(config);
+  private static String patternFile;
+
+  private Grok grok = null;
+
+  /**
+   * 执行grok的判断条件
+   */
+  private static String condition;
+
+  public JGrok(Map config) {
+    super(config);
+  }
+
+
+  static {
+    PatternRead.patternRead();
+  }
+
+
+  /**
+   * 正则解析
+   */
+  public void parserGrok(Map<String, Object> event, String value) {
+    try {
+      Map<String, String> patterns11 = grok.getPatterns();
+      Match match = grok.match(value);
+      match.captures();
+      Map<String, Object> map = match.toMap();
+      if (map != null && map.size() > 0) {
+        Set<Map.Entry<String, Object>> sets = map.entrySet();
+        for (Map.Entry<String, Object> set : sets) {
+          String key = set.getKey();
+          if (!patterns11.containsKey(key)) {
+            event.put(key, set.getValue());
+          }
+        }
+      }
+    } catch (Exception e) {
+      logger.error("parserGrok_error", e);
+    }
+  }
+
+  private void addPatternToGrok(Grok grok) throws GrokException {
+    Map<String, String> patterns = PatternRead.getPatterns();
+    if (patterns.size() > 0) {
+      Set<Map.Entry<String, String>> sets = patterns.entrySet();
+      for (Map.Entry<String, String> entry : sets) {
+        grok.addPattern(entry.getKey(), entry.getValue());
+      }
+    }
+  }
+
+
+  @SuppressWarnings("unchecked")
+  public void prepare() {
+    if (grok == null) {
+      try {
+        grok = new Grok();
+        addPatternToGrok(grok);
+        addFromPatternFile();
+        addFromPatternMap();
+      } catch (Exception e) {
+        logger.error("grok compile is error:", e);
+        System.exit(1);
+      }
+
+    }
+  }
+
+  private void addFromPatternFile() {
+    if (StringUtils.isBlank(patternFile)) {
+      return;
     }
 
+    BufferedReader br = null;
+    InputStreamReader ir = null;
 
-    static {
-    	PatternRead.patternRead();
-    }
-		
-	
-	/**
-	 * 正则解析
-	 * @param event
-	 * @param value
-	 */
-	public  void parserGrok(Map<String,Object> event,String value){
-		try{
-			Map<String,String> patterns11 =grok.getPatterns();
-			Match match =grok.match(value);
-			match.captures();
-			Map<String,Object> map =match.toMap();
-			if(map!=null&&map.size()>0){
-				Set<Map.Entry<String,Object>> sets =map.entrySet();
-				for(Map.Entry<String,Object> set:sets){
-					String key = set.getKey();
-					if(!patterns11.containsKey(key)){
-						event.put(key, set.getValue());
-					}
-				}
-			}
-		}catch(Exception e){
-		   logger.error("parserGrok_error", e);
-		}
-	}
-	
-	private void addPatternToGrok(Grok grok) throws GrokException{
-		Map<String,String> patterns =PatternRead.getPatterns();
-		if(patterns.size()>0){
-			Set<Map.Entry<String, String>> sets =patterns.entrySet();
-			for(Map.Entry<String, String> entry:sets){
-				grok.addPattern(entry.getKey(), entry.getValue());
-			}
-		}
-	}
-    
-
-    @SuppressWarnings("unchecked")
-    public void prepare() {
-		if(grok==null){
-			try {
-				grok = new Grok();
-				addPatternToGrok(grok);
-				addFromPatternFile();
-				addFromPatternMap();
-			} catch (Exception e) {
-				logger.error("grok compile is error:", e);
-				System.exit(1);
-			}
-	
-		}
-    }
-
-    private void addFromPatternFile(){
-		if(StringUtils.isBlank(patternFile)){
-			return;
-		}
-
-		BufferedReader br = null;
-		InputStreamReader ir = null;
-
-		try {
-			ir = new InputStreamReader(new FileInputStream(patternFile));
-			br = new BufferedReader(ir);
-			String line;
-			// We dont want \n and commented line
-			Pattern pattern = Pattern.compile("^([A-z0-9_]+)\\s+(.*)$");
-			while ((line = br.readLine()) != null) {
-				Matcher m = pattern.matcher(line);
-				if (m.matches()) {
-					grok.addPattern(m.group(1), m.group(2));
+    try {
+      ir = new InputStreamReader(new FileInputStream(patternFile));
+      br = new BufferedReader(ir);
+      String line;
+      // We dont want \n and commented line
+      Pattern pattern = Pattern.compile("^([A-z0-9_]+)\\s+(.*)$");
+      while ((line = br.readLine()) != null) {
+        Matcher m = pattern.matcher(line);
+        if (m.matches()) {
+          grok.addPattern(m.group(1), m.group(2));
 //					grok.compile(m.group(1));
-				}
-			}
-		} catch (Exception e) {
-			logger.error("compile grok pattern from file " + patternFile + " error.", e);
-		} finally {
-			try {
-				if (br != null) {
-					br.close();
-				}
-				if (ir != null) {
-					ir.close();
-				}
+        }
+      }
+    } catch (Exception e) {
+      logger.error("compile grok pattern from file " + patternFile + " error.", e);
+    } finally {
+      try {
+        if (br != null) {
+          br.close();
+        }
+        if (ir != null) {
+          ir.close();
+        }
 
-			} catch (IOException e) {
-				logger.error("close file io error:", e);
-			}
-		}
-
-		logger.info("add pattern from file:{} success.", patternFile);
-	}
-
-	private void addFromPatternMap(){
-
-    	if(patterns == null){
-    		return;
-		}
-
-    	try{
-			Set<Map.Entry<String, String>> entrys =patterns.entrySet();
-			for(Map.Entry<String, String> entry:entrys){
-				String key = entry.getKey();
-				String value = entry.getValue();
-				if(StringUtils.isNotBlank(value)){
-					grok.addPattern(key,value);
-					grok.compile(key);
-				} else {
-					grok.compile(key);
-				}
-			}
-		}catch (Exception e){
-    		logger.error("grok compile is error:", e);
-    		System.exit(-1);
-		}
-
-	}
-
-    @SuppressWarnings("unchecked")
-    @Override
-    protected Map filter(Map event) {
-    	try{
-    		for(String src:srcs){
-        		Object str = event.get(src);
-        		if(StringUtils.isNotBlank((String)str)){
-        			parserGrok(event,(String)str);
-        		}
-    		}
-    	}catch(Exception e){
-    		logger.error("grok filter is error: {}",e.getCause());
-    	}
-    	return event;  
+      } catch (IOException e) {
+        logger.error("close file io error:", e);
+      }
     }
+
+    logger.info("add pattern from file:{} success.", patternFile);
+  }
+
+  private void addFromPatternMap() {
+
+    if (patterns == null) {
+      return;
+    }
+
+    try {
+      Set<Map.Entry<String, String>> entrys = patterns.entrySet();
+      for (Map.Entry<String, String> entry : entrys) {
+        String key = entry.getKey();
+        String value = entry.getValue();
+        if (StringUtils.isNotBlank(value)) {
+          grok.addPattern(key, value);
+          grok.compile(key);
+        } else {
+          grok.compile(key);
+        }
+      }
+    } catch (Exception e) {
+      logger.error("grok compile is error:", e);
+      System.exit(-1);
+    }
+
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  protected Map filter(Map event) {
+    try {
+      //通过type判断是否需要执行
+      if(!StringUtils.isEmpty(this.condition)) {
+        String type = (String)event.get("type");
+        if(condition.contains("==")) {
+          String[] arr = this.condition.split("==");
+          if(arr[1].trim().equals(type)) {
+            for (String src : srcs) {
+              Object str = event.get(src);
+              if (StringUtils.isNotBlank((String) str)) {
+                parserGrok(event, (String) str);
+              }
+            }
+          }
+        }
+      } else {
+        for (String src : srcs) {
+          Object str = event.get(src);
+          if (StringUtils.isNotBlank((String) str)) {
+            parserGrok(event, (String) str);
+          }
+        }
+      }
+
+    } catch (Exception e) {
+      logger.error("grok filter is error: {}", e.getCause());
+    }
+    return event;
+  }
 
 
 }
