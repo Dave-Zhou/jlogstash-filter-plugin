@@ -197,7 +197,7 @@ public class JGrok extends BaseFilter {
   protected Map filter(Map event) {
     try {
       //根据condition 判断是否执行grok
-      if(StringUtils.isEmpty(this.condition)) {
+      if(!StringUtils.isEmpty(this.condition)) {
         if(!ConditionUtils.isTrue(event,this.condition)) {
           return event;
         }
