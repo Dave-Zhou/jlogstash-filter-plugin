@@ -7,6 +7,8 @@
    %{ip}% 这样就表示调用内置函数获取本机ip
    
    现在的内置函数有hostname，timestamp，ip
+   
+   condition: 默认Null 只支持"==、exist" 例如"[type] == testType、[type] exist" type为已有字段
 
 # DateISO8601:
 
@@ -43,7 +45,7 @@
   patternFile: 加载定义grok文件，请写入绝对路径，如/mypattern/grok-pattern
   
   使用自定义或则grok自带的表达式，使用方式如:{"%{COMBINEDAPACHELOG}":""}
-  condition: 条件判断，只支持"==" 例如:"[type] == testType"
+  condition: 默认Null 只支持"==、exist" 例如"[type] == testType、[type] exist" type为已有字段
 
 # Json:
 

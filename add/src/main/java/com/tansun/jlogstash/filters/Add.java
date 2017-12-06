@@ -18,11 +18,13 @@
 package com.tansun.jlogstash.filters;
 
 import com.tansun.jlogstash.annotation.Required;
+import com.tansun.jlogstash.utils.ConditionUtils;
 
 import java.net.InetAddress;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +46,8 @@ public class Add extends BaseFilter {
 	
 	@Required(required=true)
 	private static Map<String, Object> fields=null;
+
+	private static String condition;
 	
 	@SuppressWarnings("rawtypes")
 	public Add(Map config) {
@@ -57,6 +61,12 @@ public class Add extends BaseFilter {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	protected Map filter(final Map event) {
+		//根据condition 判断是否执行grok
+		if(!StringUtils.isEmpty(this.condition)) {
+			if(!ConditionUtils.isTrue(event,this.condition)) {
+				return event;
+			}
+		}
 		try{
 			Set<Map.Entry<String,Object>> sets =fields.entrySet();
 			for(Map.Entry<String,Object> entry:sets){
